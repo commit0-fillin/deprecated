@@ -123,7 +123,10 @@ class SphinxAdapter(ClassicAdapter):
            Strip Sphinx cross-referencing syntax from warning message.
 
         """
-        pass
+        message = super(SphinxAdapter, self).get_deprecated_msg(wrapped, instance)
+        # Strip Sphinx cross-referencing syntax
+        message = re.sub(r':(?:class|func|meth|mod|attr):`~?([^`]+)`', r'\1', message)
+        return message
 
 def versionadded(reason='', version='', line_length=70):
     """
@@ -146,7 +149,7 @@ def versionadded(reason='', version='', line_length=70):
 
     :return: the decorated function.
     """
-    pass
+    return SphinxAdapter('versionadded', reason=reason, version=version, line_length=line_length)
 
 def versionchanged(reason='', version='', line_length=70):
     """
@@ -168,7 +171,7 @@ def versionchanged(reason='', version='', line_length=70):
 
     :return: the decorated function.
     """
-    pass
+    return SphinxAdapter('versionchanged', reason=reason, version=version, line_length=line_length)
 
 def deprecated(reason='', version='', line_length=70, **kwargs):
     """
@@ -205,4 +208,4 @@ def deprecated(reason='', version='', line_length=70, **kwargs):
     .. versionchanged:: 1.2.13
        Change the signature of the decorator to reflect the valid use cases.
     """
-    pass
+    return SphinxAdapter('deprecated', reason=reason, version=version, line_length=line_length, **kwargs)
